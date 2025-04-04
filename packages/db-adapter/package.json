@@ -7,5 +7,8 @@
     "node": "^22",
     "npm": ">=9"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@prisma/client": "^6.5.0",
+    "prisma": "^6.5.0"
+  }
 }
