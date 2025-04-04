@@ -1,0 +1,15 @@
+{
+  "name": "lahjalista-auth",
+  "description": "Authentication side of the authentication project",
+  "version": "0.0.1",
+  "private": true,
+  "engines": {
+    "node": "^22",
+    "npm": ">=9"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.2"
+  }
+}
