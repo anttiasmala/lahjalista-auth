@@ -3,6 +3,10 @@
   "description": "Database-adapter side of the authentication project",
   "version": "0.0.1",
   "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx tests/prisma.ts"
+  },
   "engines": {
     "node": "^22",
     "npm": ">=9"

@@ -3,6 +3,7 @@
   "description": "Authentication system for Lahjalista project https://github.com/samuliasmala/lahjalista/",
   "version": "0.0.1",
   "private": true,
+  "type": "module",
   "engines": {
     "node": "^22",
     "npm": ">=9"
