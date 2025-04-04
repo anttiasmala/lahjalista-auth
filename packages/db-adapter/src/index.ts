@@ -4,3 +4,6 @@ function getSession() {}
 function getUserFromSession() {}
 function getUserAndSession() {}
 function getUsersAllSessions() {}
+function updateSessionExpirationDate() {}
+function deleteUsersAllSessions() {}
+function deleteExpiredSessions() {}
