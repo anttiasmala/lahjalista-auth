@@ -43,6 +43,13 @@ export function isWithinExpirationDate(date: Date): boolean {
   return Date.now() < date.getTime();
 }
 
+/**
+ * Creates a date using TimeSpan class
+ *
+ * @example createDate(new TimeSpan(10, "m"))
+ * @param timeSpan the TimeSpan class
+ * @returns Date
+ */
 export function createDate(timeSpan: TimeSpan): Date {
   return new Date(Date.now() + timeSpan.milliseconds());
 }
