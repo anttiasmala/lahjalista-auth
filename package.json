@@ -1,4 +1,12 @@
 {
+  "name": "lahjalista-auth",
+  "description": "Authentication system for Lahjalista project https://github.com/samuliasmala/lahjalista/",
+  "version": "0.0.1",
+  "private": true,
+  "engines": {
+    "node": "^22",
+    "npm": ">=9"
+  },
   "devDependencies": {
     "@types/node": "^22.14.0",
     "prettier": "^3.5.3",
