@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "allowImportingTsExtensions": true,
-    "target": "es5",
+    "target": "es2017", // changed from es5 to be able to run await in toplevel
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
