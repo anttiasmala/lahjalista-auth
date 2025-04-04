@@ -8,7 +8,8 @@
     "node": "^22",
     "npm": ">=9"
   },
-  "dependencies": {
-    "oslo": "^1.2.1"
+  "devDependencies": {
+    "@oslojs/crypto": "^1.0.1",
+    "@oslojs/encoding": "^1.1.0"
   }
 }
