@@ -4,6 +4,9 @@ import { generateIdFromEntropySize } from './crypto';
 
 import type { Cookie, CookieAttributes } from './cookie';
 
+import { PrismaAdapter } from '~/packages/db-adapter/src';
+import type { Adapter } from '~/packages/db-adapter/src';
+
 // hardcoded values of Lahjalista's User
 type LahjalistaUser = {
   email: string;
@@ -15,32 +18,21 @@ type LahjalistaUser = {
   role: string;
 };
 
-export interface Session extends SessionAttributes {
+export interface Session {
   id: string;
   expiresAt: Date;
   fresh: boolean;
   userUUID: string; // userUUID
 }
 
-export interface User extends UserAttributes {
+export interface User {
   uuid: string; // userUUID
 }
 
-export class Lucia<
-  _SessionAttributes extends {} = Record<never, never>,
-  _UserAttributes extends {} = Record<never, never>,
-> {
+export class LahjaListaAuth {
   private adapter: Adapter;
   private sessionExpiresIn: TimeSpan;
   private sessionCookieController: CookieController;
-
-  private getSessionAttributes: (
-    databaseSessionAttributes: RegisteredDatabaseSessionAttributes,
-  ) => _SessionAttributes;
-
-  private getUserAttributes: (
-    databaseUserAttributes: RegisteredDatabaseUserAttributes,
-  ) => _UserAttributes;
 
   public readonly sessionCookieName: string;
 
@@ -49,31 +41,13 @@ export class Lucia<
     options?: {
       sessionExpiresIn?: TimeSpan;
       sessionCookie?: SessionCookieOptions;
-      getSessionAttributes?: (
-        databaseSessionAttributes: RegisteredDatabaseSessionAttributes,
-      ) => _SessionAttributes;
-      getUserAttributes?: (
-        databaseUserAttributes: RegisteredDatabaseUserAttributes,
-      ) => _UserAttributes;
     },
   ) {
     this.adapter = adapter;
 
-    // we have to use `any` here since TS can't do conditional return types
-    this.getUserAttributes = (databaseUserAttributes): any => {
-      if (options && options.getUserAttributes) {
-        return options.getUserAttributes(databaseUserAttributes);
-      }
-      return {};
-    };
-    this.getSessionAttributes = (databaseSessionAttributes): any => {
-      if (options && options.getSessionAttributes) {
-        return options.getSessionAttributes(databaseSessionAttributes);
-      }
-      return {};
-    };
     this.sessionExpiresIn = options?.sessionExpiresIn ?? new TimeSpan(30, 'd');
     this.sessionCookieName = options?.sessionCookie?.name ?? 'auth_session';
+
     let sessionCookieExpiresIn = this.sessionExpiresIn;
     if (options?.sessionCookie?.expires === false) {
       sessionCookieExpiresIn = new TimeSpan(400, 'd');
@@ -94,8 +68,12 @@ export class Lucia<
     );
   }
 
-  public async getUserSessions(userId: UserId): Promise<Session[]> {
-    const databaseSessions = await this.adapter.getUserSessions(userId);
+  /**
+   * Gets all the sessions a specific user has and returns them
+   * @returns an array of sessions
+   */
+  public async getUserSessions(userUUID: string): Promise<Session[]> {
+    const databaseSessions = await this.adapter.getUserSessions(userUUID);
     const sessions: Session[] = [];
     for (const databaseSession of databaseSessions) {
       if (!isWithinExpirationDate(databaseSession.expiresAt)) {

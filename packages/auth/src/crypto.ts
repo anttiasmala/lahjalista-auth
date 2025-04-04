@@ -12,6 +12,10 @@ export function generateId(length: number): string {
   return generateRandomString(random, alphabet, length);
 }
 
+export function generateUUID() {
+  return crypto.randomUUID().toString();
+}
+
 export function generateIdFromEntropySize(size: number): string {
   const buffer = crypto.getRandomValues(new Uint8Array(size));
   return encodeBase32LowerCaseNoPadding(buffer);
