@@ -25,5 +25,8 @@ CREATE UNIQUE INDEX "User_uuid_key" ON "User"("uuid");
 -- CreateIndex
 CREATE UNIQUE INDEX "Session_uuid_key" ON "Session"("uuid");
 
+-- CreateIndex
+CREATE INDEX "Session_userUUID_idx" ON "Session"("userUUID");
+
 -- AddForeignKey
 ALTER TABLE "Session" ADD CONSTRAINT "Session_userUUID_fkey" FOREIGN KEY ("userUUID") REFERENCES "User"("uuid") ON DELETE CASCADE ON UPDATE CASCADE;
