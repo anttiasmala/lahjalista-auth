@@ -7,9 +7,5 @@
     "node": "^22",
     "npm": ">=9"
   },
-  "devDependencies": {
-    "@types/node": "^22.14.0",
-    "prettier": "^3.5.3",
-    "typescript": "^5.8.2"
-  }
+  "devDependencies": {}
 }
