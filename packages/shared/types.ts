@@ -1,5 +1,5 @@
 export type Session = {
-  id: string;
+  uuid: string;
   expiresAt: Date;
   fresh: boolean;
   userUUID: string; // userUUID
