@@ -25,11 +25,11 @@ export type Adapter = {
   getSession: () => Promise<Session>;
   getUserFromSession: () => Promise<User>; // potentially a dangerous function
   getUserAndSessions: () => Promise<[Session[], User]>; // gets the user and ALL the sessions
-  getUserAndSession: (
-    sessionUUID: string,
-  ) => Promise<[Session, LahjalistaUser]>; // gets the user and ONLY ONE session
+  //prettier-ignore
+  getUserAndSession: (sessionUUID: string) => Promise<[Session, LahjalistaUser]>; // gets the user and ONLY ONE session
   getUserSessions: (userUUID: string) => Promise<Session[]>; // gets all the sessions belonging to a ONE user
-  updateSessionExpirationDate: (sessionUUID: string, sessionExpirationDate: Date) => Promise<void>; // prettier-ignore
+  // prettier-ignore
+  updateSessionExpirationDate: (sessionUUID: string, sessionExpirationDate: Date) => Promise<void>;
   deleteUserSessions: () => Promise<void>; // deletes all the sessions belonging to a user
   deleteExpiredSessions: () => Promise<void>;
 };
