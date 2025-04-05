@@ -78,9 +78,8 @@ export class CookieController {
   private cookieExpiresIn: TimeSpan | null;
   private baseCookieAttributes: CookieAttributes;
 
-  public createCookie(value: string): Cookie {
-    return new Cookie(this.cookieName, value, {
-      ...this.baseCookieAttributes,
+  public createCookie(sessionUUID: string): Cookie {
+    return new Cookie(this.cookieName, sessionUUID, {
       maxAge: this.cookieExpiresIn?.seconds(),
     });
   }
