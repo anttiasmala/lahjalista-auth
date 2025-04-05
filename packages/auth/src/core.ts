@@ -47,23 +47,21 @@ export class LahjaListaAuth {
     );
   }
 
-  /**
-   * Gets all the sessions a specific user has and returns them
-   * @returns an array of sessions
-   */
+  /** **Gets all the NON-EXPIRED sessions of a user has and returns them** */
   public async getUserSessions(userUUID: string): Promise<Session[]> {
     const databaseSessions = await this.adapter.getUserSessions(userUUID);
     const sessions: Session[] = [];
     for (const databaseSession of databaseSessions) {
+      // session is expired, don't add it into sessions array
       if (!isWithinExpirationDate(databaseSession.expiresAt)) {
         continue;
       }
+
       sessions.push({
-        id: databaseSession.id,
+        uuid: databaseSession.uuid,
         expiresAt: databaseSession.expiresAt,
-        userId: databaseSession.userId,
+        userUUID: databaseSession.userUUID,
         fresh: false,
-        ...this.getSessionAttributes(databaseSession.attributes),
       });
     }
     return sessions;
