@@ -69,6 +69,7 @@ export class LahjaListaAuth {
     return sessions;
   }
 
+  /** **Checks if session is valid and can let user in** */
   public async validateSession(
     sessionId: string,
   ): Promise<{ user: User; session: Session } | { user: null; session: null }> {
