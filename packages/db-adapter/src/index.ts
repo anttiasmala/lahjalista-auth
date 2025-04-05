@@ -1,6 +1,11 @@
 import { Prisma, PrismaClient } from '@prisma/client';
 import { generateId, generateUUID } from '~/packages/auth/src/crypto';
-import { CreateSession, Session, User } from '~/packages/shared/types';
+import {
+  CreateSession,
+  DatabaseAdapter,
+  Session,
+  User,
+} from '~/packages/shared/types';
 
 /*
 function createSession() {}
@@ -18,23 +23,7 @@ declare global {
   var prisma: undefined | PrismaClient; //eslint-disable-line no-var
 }
 
-export type Adapter = {
-  createSession: (sessionData: CreateSession) => Promise<void>;
-  deleteSession: (sessionUUID: string) => Promise<void>;
-  setSession: () => Promise<void>;
-  getSession: () => Promise<Session>;
-  getUserFromSession: () => Promise<User>; // potentially a dangerous function
-  getUserAndSessions: () => Promise<[Session[], User]>; // gets the user and ALL the sessions
-  //prettier-ignore
-  getUserAndSession: (sessionUUID: string) => Promise<[Session, LahjalistaUser]>; // gets the user and ONLY ONE session
-  getUserSessions: (userUUID: string) => Promise<Session[]>; // gets all the sessions belonging to a ONE user
-  // prettier-ignore
-  updateSessionExpirationDate: (sessionUUID: string, sessionExpirationDate: Date) => Promise<void>;
-  deleteUserSessions: (userUUID: string) => Promise<void>; // deletes all the sessions belonging to a user
-  deleteExpiredSessions: () => Promise<void>;
-};
-
-export class PrismaAdapter implements Adapter {
+export class PrismaAdapter implements DatabaseAdapter {
   private prisma: PrismaClient;
 
   constructor(prisma: PrismaClient) {
