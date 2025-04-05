@@ -1,6 +1,6 @@
 import { TimeSpan, createDate, isWithinExpirationDate } from './date';
 import { CookieController } from './cookie';
-import { generateIdFromEntropySize } from './crypto';
+import { generateIdFromEntropySize, generateUUID } from './crypto';
 
 import type { Cookie, CookieAttributes } from './cookie';
 
@@ -69,19 +69,21 @@ export class LahjaListaAuth {
 
   /** **Checks if session is valid and can let user in** */
   public async validateSession(
-    sessionId: string,
-  ): Promise<{ user: User; session: Session } | { user: null; session: null }> {
+    sessionUUID: string,
+  ): Promise<
+    { user: LahjalistaUser; session: Session } | { user: null; session: null }
+  > {
     const [databaseSession, databaseUser] =
-      await this.adapter.getUserAndSession(sessionId);
+      await this.adapter.getUserAndSession(sessionUUID);
     if (!databaseSession) {
       return { session: null, user: null };
     }
     if (!databaseUser) {
-      await this.adapter.deleteSession(databaseSession.id);
+      await this.adapter.deleteSession(databaseSession.uuid);
       return { session: null, user: null };
     }
     if (!isWithinExpirationDate(databaseSession.expiresAt)) {
-      await this.adapter.deleteSession();
+      await this.adapter.deleteSession(databaseSession.uuid);
       return { session: null, user: null };
     }
     const activePeriodExpirationDate = new Date(
@@ -89,7 +91,7 @@ export class LahjaListaAuth {
         this.sessionExpiresIn.milliseconds() / 2,
     );
     const session: Session = {
-      id: databaseSession.id,
+      uuid: databaseSession.uuid,
       userUUID: databaseSession.userUUID,
       fresh: false,
       expiresAt: databaseSession.expiresAt,
@@ -97,39 +99,33 @@ export class LahjaListaAuth {
     if (!isWithinExpirationDate(activePeriodExpirationDate)) {
       session.fresh = true;
       session.expiresAt = createDate(this.sessionExpiresIn);
-      await this.adapter.updateSessionExpiration(
-        databaseSession.id,
+      await this.adapter.updateSessionExpirationDate(
+        databaseSession.uuid,
         session.expiresAt,
       );
     }
-    const user: User = {
-      ...this.getUserAttributes(databaseUser.attributes),
-      id: databaseUser.id,
-    };
+    const user: LahjalistaUser = databaseUser;
     return { user, session };
   }
 
   public async createSession(
-    userId: UserId,
-    attributes: RegisteredDatabaseSessionAttributes,
+    userUUID: string,
     options?: {
-      sessionId?: string;
+      sessionUUID?: string;
     },
   ): Promise<Session> {
-    const sessionId = options?.sessionId ?? generateIdFromEntropySize(25);
+    const sessionUUID = options?.sessionUUID ?? generateUUID();
     const sessionExpiresAt = createDate(this.sessionExpiresIn);
-    await this.adapter.setSession({
-      id: sessionId,
-      userId,
+    await this.adapter.createSession({
+      uuid: sessionUUID,
       expiresAt: sessionExpiresAt,
-      attributes,
+      userUUID,
     });
     const session: Session = {
-      id: sessionId,
-      userId,
+      userUUID,
+      uuid: sessionUUID,
       fresh: true,
       expiresAt: sessionExpiresAt,
-      ...this.getSessionAttributes(attributes),
     };
     return session;
   }
