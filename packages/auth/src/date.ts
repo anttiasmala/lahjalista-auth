@@ -39,6 +39,7 @@ export class TimeSpan {
   }
 }
 
+/** **Checks if expiration date is valid**  */
 export function isWithinExpirationDate(date: Date): boolean {
   return Date.now() < date.getTime();
 }
