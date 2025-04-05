@@ -19,7 +19,7 @@ declare global {
 }
 
 export type Adapter = {
-  createSession: (SessionData: CreateSession) => Promise<void>;
+  createSession: (sessionData: CreateSession) => Promise<void>;
   deleteSession: (sessionUUID: string) => Promise<void>;
   setSession: () => Promise<void>;
   getSession: () => Promise<Session>;
@@ -30,7 +30,7 @@ export type Adapter = {
   getUserSessions: (userUUID: string) => Promise<Session[]>; // gets all the sessions belonging to a ONE user
   // prettier-ignore
   updateSessionExpirationDate: (sessionUUID: string, sessionExpirationDate: Date) => Promise<void>;
-  deleteUserSessions: () => Promise<void>; // deletes all the sessions belonging to a user
+  deleteUserSessions: (userUUID: string) => Promise<void>; // deletes all the sessions belonging to a user
   deleteExpiredSessions: () => Promise<void>;
 };
 
@@ -41,9 +41,9 @@ export class PrismaAdapter implements Adapter {
     this.prisma = prisma;
   }
 
-  async createSession(SessionData: CreateSession) {
+  async createSession(sessionData: CreateSession) {
     await this.prisma.session.create({
-      data: SessionData,
+      data: sessionData,
     });
     return;
   }
