@@ -130,23 +130,27 @@ export class LahjaListaAuth {
     return session;
   }
 
-  public async invalidateSession(sessionId: string): Promise<void> {
-    await this.adapter.deleteSession(sessionId);
+  /** **Deletes ONLY ONE session of a user** */
+  public async deleteSession(sessionUUID: string): Promise<void> {
+    await this.adapter.deleteSession(sessionUUID);
   }
 
-  public async invalidateUserSessions(userId: UserId): Promise<void> {
-    await this.adapter.deleteUserSessions(userId);
+  /** **Deletes ALL the sessions of a user** */
+  public async deleteUserSessions(userUUID: string): Promise<void> {
+    await this.adapter.deleteUserSessions(userUUID);
   }
 
+  /** **Deletes ALL the expired sessions of ALL the users** */
   public async deleteExpiredSessions(): Promise<void> {
     await this.adapter.deleteExpiredSessions();
   }
 
   public readSessionCookie(cookieHeader: string): string | null {
-    const sessionId = this.sessionCookieController.parse(cookieHeader);
-    return sessionId;
+    const sessionUUID = this.sessionCookieController.parse(cookieHeader);
+    return sessionUUID;
   }
 
+  // this seems to be unused in Lahjalista. Let's keep it for now
   public readBearerToken(authorizationHeader: string): string | null {
     const [authScheme, token] = authorizationHeader.split(' ') as [
       string,
