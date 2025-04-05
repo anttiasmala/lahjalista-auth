@@ -5,18 +5,23 @@ import { generateIdFromEntropySize, generateUUID } from './crypto';
 import type { Cookie, CookieAttributes } from './cookie';
 
 import { PrismaAdapter } from '~/packages/db-adapter/src';
-import type { Adapter } from '~/packages/db-adapter/src';
-import { Session, User, LahjalistaUser } from '~/packages/shared/types';
+
+import type {
+  Session,
+  User,
+  LahjalistaUser,
+  DatabaseAdapter,
+} from '~/packages/shared/types';
 
 export class LahjaListaAuth {
-  private adapter: Adapter;
+  private adapter: DatabaseAdapter;
   private sessionExpiresIn: TimeSpan;
   private sessionCookieController: CookieController;
 
   public readonly sessionCookieName: string;
 
   constructor(
-    adapter: Adapter,
+    adapter: DatabaseAdapter,
     options?: {
       sessionExpiresIn?: TimeSpan;
       sessionCookie?: SessionCookieOptions;
