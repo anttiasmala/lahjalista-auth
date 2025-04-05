@@ -1,5 +1,6 @@
 import { generateRandomString } from '@oslojs/crypto/random';
 import type { RandomReader } from '@oslojs/crypto/random';
+import { encodeBase32LowerCaseNoPadding } from '@oslojs/encoding';
 
 const random: RandomReader = {
   read(bytes: Uint8Array): void {
