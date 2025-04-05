@@ -1,6 +1,6 @@
 import { Prisma, PrismaClient } from '@prisma/client';
 import { generateId, generateUUID } from '~/packages/auth/src/crypto';
-import { Session, User } from '~/packages/shared/types';
+import { CreateSession, Session, User } from '~/packages/shared/types';
 
 /*
 function createSession() {}
@@ -19,15 +19,17 @@ declare global {
 }
 
 export type Adapter = {
-  createSession: (userUUID: string) => Promise<void>;
+  createSession: (SessionData: CreateSession) => Promise<void>;
   deleteSession: (sessionUUID: string) => Promise<void>;
   setSession: () => Promise<void>;
   getSession: () => Promise<Session>;
   getUserFromSession: () => Promise<User>; // potentially a dangerous function
   getUserAndSessions: () => Promise<[Session[], User]>; // gets the user and ALL the sessions
-  getUserAndSession: () => Promise<[Session, User]>; // gets the use and ONLY ONE session
+  getUserAndSession: (
+    sessionUUID: string,
+  ) => Promise<[Session, LahjalistaUser]>; // gets the user and ONLY ONE session
   getUserSessions: (userUUID: string) => Promise<Session[]>; // gets all the sessions belonging to a ONE user
-  updateSessionExpirationDate: () => Promise<void>;
+  updateSessionExpirationDate: (sessionUUID: string, sessionExpirationDate: Date) => Promise<void>; // prettier-ignore
   deleteUserSessions: () => Promise<void>; // deletes all the sessions belonging to a user
   deleteExpiredSessions: () => Promise<void>;
 };
@@ -39,12 +41,9 @@ export class PrismaAdapter implements Adapter {
     this.prisma = prisma;
   }
 
-  async createSession(userUUID: string) {
+  async createSession(SessionData: CreateSession) {
     await this.prisma.session.create({
-      data: {
-        uuid: generateUUID(),
-        userUUID,
-      },
+      data: SessionData,
     });
     return;
   }
