@@ -5,6 +5,12 @@ export type Session = {
   userUUID: string; // userUUID
 };
 
+export type CreateSession = {
+  uuid: string;
+  expiresAt: Date;
+  userUUID: string;
+};
+
 export type User = {
   uuid: string; // userUUID
 };
