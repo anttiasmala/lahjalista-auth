@@ -6,18 +6,7 @@ import type { Cookie, CookieAttributes } from './cookie';
 
 import { PrismaAdapter } from '~/packages/db-adapter/src';
 import type { Adapter } from '~/packages/db-adapter/src';
-import { Session, User } from '~/packages/shared/types';
-
-// hardcoded values of Lahjalista's User
-type LahjalistaUser = {
-  email: string;
-  firstName: string;
-  lastName: string;
-  createdAt: Date;
-  updatedAt: Date;
-  uuid: string;
-  role: string;
-};
+import { Session, User, LahjalistaUser } from '~/packages/shared/types';
 
 export class LahjaListaAuth {
   private adapter: Adapter;
