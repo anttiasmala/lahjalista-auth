@@ -18,17 +18,6 @@ type LahjalistaUser = {
   role: string;
 };
 
-export interface Session {
-  id: string;
-  expiresAt: Date;
-  fresh: boolean;
-  userUUID: string; // userUUID
-}
-
-export interface User {
-  uuid: string; // userUUID
-}
-
 export class LahjaListaAuth {
   private adapter: Adapter;
   private sessionExpiresIn: TimeSpan;
