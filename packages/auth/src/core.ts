@@ -74,7 +74,7 @@ export class LahjaListaAuth {
     sessionId: string,
   ): Promise<{ user: User; session: Session } | { user: null; session: null }> {
     const [databaseSession, databaseUser] =
-      await this.adapter.getSessionAndUser(sessionId);
+      await this.adapter.getUserAndSession(sessionId);
     if (!databaseSession) {
       return { session: null, user: null };
     }
@@ -83,7 +83,7 @@ export class LahjaListaAuth {
       return { session: null, user: null };
     }
     if (!isWithinExpirationDate(databaseSession.expiresAt)) {
-      await this.adapter.deleteSession(databaseSession.id);
+      await this.adapter.deleteSession();
       return { session: null, user: null };
     }
     const activePeriodExpirationDate = new Date(
@@ -91,9 +91,8 @@ export class LahjaListaAuth {
         this.sessionExpiresIn.milliseconds() / 2,
     );
     const session: Session = {
-      ...this.getSessionAttributes(databaseSession.attributes),
       id: databaseSession.id,
-      userId: databaseSession.userId,
+      userUUID: databaseSession.userUUID,
       fresh: false,
       expiresAt: databaseSession.expiresAt,
     };

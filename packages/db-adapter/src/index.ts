@@ -20,12 +20,13 @@ declare global {
 
 export type Adapter = {
   createSession: (userUUID: string) => Promise<void>;
-  deleteSession: () => Promise<void>;
+  deleteSession: (sessionUUID: string) => Promise<void>;
   setSession: () => Promise<void>;
   getSession: () => Promise<Session>;
   getUserFromSession: () => Promise<User>; // potentially a dangerous function
-  getUserAndSessions: () => Promise<[Session, User]>;
-  getUserSessions: (userUUID: string) => Promise<Session[]>; // gets all the sessions belonging to a user
+  getUserAndSessions: () => Promise<[Session[], User]>; // gets the user and ALL the sessions
+  getUserAndSession: () => Promise<[Session, User]>; // gets the use and ONLY ONE session
+  getUserSessions: (userUUID: string) => Promise<Session[]>; // gets all the sessions belonging to a ONE user
   updateSessionExpirationDate: () => Promise<void>;
   deleteUserSessions: () => Promise<void>; // deletes all the sessions belonging to a user
   deleteExpiredSessions: () => Promise<void>;
