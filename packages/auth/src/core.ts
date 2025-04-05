@@ -162,8 +162,8 @@ export class LahjaListaAuth {
     return token ?? null;
   }
 
-  public createSessionCookie(sessionId: string): Cookie {
-    return this.sessionCookieController.createCookie(sessionId);
+  public createSessionCookie(sessionUUID: string): Cookie {
+    return this.sessionCookieController.createCookie(sessionUUID);
   }
 
   public createBlankSessionCookie(): Cookie {
