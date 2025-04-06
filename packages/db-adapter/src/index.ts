@@ -31,8 +31,13 @@ export class PrismaAdapter implements DatabaseAdapter {
   }
 
   async createSession(sessionData: CreateSession): Promise<void> {
+    const { expiresAt, userUUID, uuid } = sessionData;
     await this.prisma.session.create({
-      data: sessionData,
+      data: {
+        uuid,
+        userUUID,
+        expiresAt,
+      },
     });
     return;
   }
@@ -44,6 +49,22 @@ export class PrismaAdapter implements DatabaseAdapter {
       },
     });
     return;
+  }
+  async getSession(sessionUUID: string): Promise<Session | null> {
+    const session = await this.prisma.session.findFirst({
+      where: { uuid: sessionUUID },
+      select: {
+        uuid: true,
+        expiresAt: true,
+        userUUID: true,
+      },
+    });
+
+    if (session) {
+      return { fresh: false, ...session };
+    }
+
+    return null;
   }
 }
 
