@@ -30,14 +30,14 @@ export class PrismaAdapter implements DatabaseAdapter {
     this.prisma = prisma ?? new PrismaClient();
   }
 
-  async createSession(sessionData: CreateSession) {
+  async createSession(sessionData: CreateSession): Promise<void> {
     await this.prisma.session.create({
       data: sessionData,
     });
     return;
   }
 
-  async deleteSession(sessionUUID: string) {
+  async deleteSession(sessionUUID: string): Promise<void> {
     await this.prisma.session.delete({
       where: {
         uuid: sessionUUID,
