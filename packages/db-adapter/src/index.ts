@@ -36,6 +36,15 @@ export class PrismaAdapter implements DatabaseAdapter {
     });
     return;
   }
+
+  async deleteSession(sessionUUID: string) {
+    await this.prisma.session.delete({
+      where: {
+        uuid: sessionUUID,
+      },
+    });
+    return;
+  }
 }
 
 const prisma = new PrismaClient();
