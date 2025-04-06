@@ -13,6 +13,7 @@ CREATE TABLE "Session" (
     "id" SERIAL NOT NULL,
     "uuid" TEXT NOT NULL,
     "userUUID" TEXT NOT NULL,
+    "expiresAt" TIMESTAMP(3) NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
