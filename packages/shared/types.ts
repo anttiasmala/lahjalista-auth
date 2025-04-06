@@ -19,7 +19,7 @@ export type DatabaseAdapter = {
   createSession: (sessionData: CreateSession) => Promise<void>;
   deleteSession: (sessionUUID: string) => Promise<void>;
   setSession: () => Promise<void>; // createSession is same
-  getSession: () => Promise<Session>;
+  getSession: (sessionUUID: string) => Promise<Session>;
   getUserFromSession: () => Promise<User>; // potentially a dangerous function
   getUserAndSessions: () => Promise<[Session[], User]>; // gets the user and ALL the sessions
   //prettier-ignore
