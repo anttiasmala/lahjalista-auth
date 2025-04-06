@@ -27,7 +27,7 @@ export class PrismaAdapter implements DatabaseAdapter {
   private prisma: PrismaClient;
 
   constructor(prisma: PrismaClient) {
-    this.prisma = prisma;
+    this.prisma = prisma ?? new PrismaClient();
   }
 
   async createSession(sessionData: CreateSession) {
