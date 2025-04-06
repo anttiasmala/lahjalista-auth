@@ -8,15 +8,21 @@ import {
 } from '~/packages/shared/types';
 
 /*
-function createSession() {}
-function deleteSession() {}
-function getSession() {}
-function getUserFromSession() {}
-function getUserAndSessions() {}
-function getUsersAllSessions() {}
-function updateSessionExpirationDate() {}
-function deleteUsersAllSessions() {}
-function deleteExpiredSessions() {}
+createSession: (sessionData: CreateSession) => Promise<void>;
+deleteSession: (sessionUUID: string) => Promise<void>;
+setSession: () => Promise<void>; // createSession is same
+getSession: (sessionUUID: string) => Promise<Session | null>;
+//prettier-ignore
+getUserFromSession: (sessionUUID: string) => Promise<LahjalistaUser>; // potentially a dangerous function
+// prettier-ignore
+getUserAndSessions: (sessionUUID: string) => Promise<[Session[], LahjalistaUser]>; // gets the user and ALL the sessions
+//prettier-ignore
+getUserAndSession: (sessionUUID: string) => Promise<[Session, LahjalistaUser]>; // gets the user and ONLY ONE session
+getUserSessions: (userUUID: string) => Promise<Session[]>; // gets all the sessions belonging to a ONE user
+// prettier-ignore
+updateSessionExpirationDate: (sessionUUID: string, sessionExpirationDate: Date) => Promise<void>;
+deleteUserSessions: (userUUID: string) => Promise<void>; // deletes all the sessions belonging to a user
+deleteExpiredSessions: () => Promise<void>;
 */
 
 declare global {
