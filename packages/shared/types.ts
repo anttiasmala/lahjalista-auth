@@ -23,9 +23,9 @@ export type DatabaseAdapter = {
   //prettier-ignore
   getUserFromSession: (sessionUUID: string) => Promise<LahjalistaUser | null>; // potentially a dangerous function
   // prettier-ignore
-  getUserAndSessions: (sessionUUID: string) => Promise<[Session[], LahjalistaUser] | null>; // gets the user and ALL the sessions
+  getUserAndSessions: (userUUID: string) => Promise<[Session[], LahjalistaUser] | null>; // gets the user and ALL the sessions
   //prettier-ignore
-  getUserAndSession: (sessionUUID: string) => Promise<[Session, LahjalistaUser] | null>; // gets the user and ONLY ONE session
+  getUserAndSession: (userUUID: string) => Promise<[Session, LahjalistaUser] | null>; // gets the user and ONLY ONE session
   getUserSessions: (userUUID: string) => Promise<Session[]>; // gets all the sessions belonging to a ONE user
   // prettier-ignore
   updateSessionExpirationDate: (sessionUUID: string, sessionExpirationDate: Date) => Promise<void>;

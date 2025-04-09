@@ -3,6 +3,7 @@ import { generateId, generateUUID } from '~/packages/auth/src/crypto';
 import {
   CreateSession,
   DatabaseAdapter,
+  LahjalistaUser,
   Session,
   User,
 } from '~/packages/shared/types';
@@ -36,6 +37,16 @@ export class PrismaAdapter implements DatabaseAdapter {
     this.prisma = prisma ?? new PrismaClient();
   }
 
+  private async _getUser(userUUID: string): Promise<LahjalistaUser | null> {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        uuid: userUUID,
+      },
+    });
+
+    return user ? user : null;
+  }
+
   async createSession(sessionData: CreateSession): Promise<void> {
     const { expiresAt, userUUID, uuid } = sessionData;
     await this.prisma.session.create({
@@ -58,7 +69,7 @@ export class PrismaAdapter implements DatabaseAdapter {
   }
 
   async getSession(sessionUUID: string): Promise<Session | null> {
-    const session = await this.prisma.session.findFirst({
+    const session = await this.prisma.session.findUnique({
       where: { uuid: sessionUUID },
       select: {
         uuid: true,
@@ -77,18 +88,54 @@ export class PrismaAdapter implements DatabaseAdapter {
   async getUserFromSession(
     sessionUUID: string,
   ): Promise<LahjalistaUser | null> {
-    const session = await this.prisma.session.findFirst({
+    const session = await this.prisma.session.findUnique({
       where: {
         uuid: sessionUUID,
       },
       select: {
-        User: true,
+        User: {
+          omit: {
+            id: true,
+            password: true,
+          },
+        },
       },
     });
 
     if (!session || !session.User) return null;
 
     return session.User;
+  }
+
+  async getUserAndSessions(
+    userUUID: string,
+  ): Promise<[Session[], LahjalistaUser] | null> {
+    const sessionsFromDatabase = await this.prisma.session.findMany({
+      where: {
+        userUUID: userUUID,
+      },
+      select: {
+        uuid: true,
+        expiresAt: true,
+        userUUID: true,
+      },
+    });
+
+    // return null if sessions were not found
+    if (sessionsFromDatabase.length <= 0) return null;
+
+    // if sessions were found get the user
+    const user = await this._getUser(userUUID);
+
+    // if user does not exist return null
+    if (!user) return null;
+
+    const sessions: Session[] = sessionsFromDatabase.map((object) => ({
+      ...object,
+      fresh: false,
+    }));
+
+    return [sessions, user];
   }
 }
 
