@@ -56,6 +56,7 @@ export class PrismaAdapter implements DatabaseAdapter {
     });
     return;
   }
+
   async getSession(sessionUUID: string): Promise<Session | null> {
     const session = await this.prisma.session.findFirst({
       where: { uuid: sessionUUID },
@@ -69,8 +70,25 @@ export class PrismaAdapter implements DatabaseAdapter {
     if (session) {
       return { fresh: false, ...session };
     }
-
     return null;
+  }
+
+  /** **Potentially a risky function** */
+  async getUserFromSession(
+    sessionUUID: string,
+  ): Promise<LahjalistaUser | null> {
+    const session = await this.prisma.session.findFirst({
+      where: {
+        uuid: sessionUUID,
+      },
+      select: {
+        User: true,
+      },
+    });
+
+    if (!session || !session.User) return null;
+
+    return session.User;
   }
 }
 
