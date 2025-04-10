@@ -174,6 +174,26 @@ export class PrismaAdapter implements DatabaseAdapter {
       sessionFromDatabase.User,
     ];
   }
+
+  async getUserSessions(userUUID: string): Promise<Session[]> {
+    const sessionsFromDatabase = await this.prisma.session.findMany({
+      where: {
+        userUUID,
+      },
+      select: {
+        uuid: true,
+        expiresAt: true,
+        userUUID: true,
+      },
+    });
+
+    const sessions: Session[] = sessionsFromDatabase.map((object) => ({
+      ...object,
+      fresh: false,
+    }));
+
+    return sessions;
+  }
 }
 
 const prisma = new PrismaClient();
