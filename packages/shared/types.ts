@@ -1,8 +1,11 @@
-export type Session = {
+export interface Session extends DatabaseSession {
+  fresh: boolean;
+}
+
+export type DatabaseSession = {
   uuid: string;
   expiresAt: Date;
-  fresh: boolean;
-  userUUID: string; // userUUID
+  userUUID: string;
 };
 
 export type CreateSession = {
