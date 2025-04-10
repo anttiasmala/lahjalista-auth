@@ -205,6 +205,16 @@ export class PrismaAdapter implements DatabaseAdapter {
 
     return;
   }
+
+  async deleteExpiredSessions(): Promise<void> {
+    await this.prisma.session.deleteMany({
+      where: {
+        expiresAt: {
+          lte: new Date(),
+        },
+      },
+    });
+  }
 }
 
 const prisma = new PrismaClient();
