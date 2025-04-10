@@ -194,6 +194,17 @@ export class PrismaAdapter implements DatabaseAdapter {
 
     return sessions;
   }
+
+  /** **Deletes sessions that belongs to a specific user** */
+  async deleteUserSessions(userUUID: string): Promise<void> {
+    await this.prisma.session.deleteMany({
+      where: {
+        userUUID,
+      },
+    });
+
+    return;
+  }
 }
 
 const prisma = new PrismaClient();
