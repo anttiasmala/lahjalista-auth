@@ -206,12 +206,28 @@ export class PrismaAdapter implements DatabaseAdapter {
     return;
   }
 
+  /** **Deletes ALL the expired sessions no matter who owns it** */
   async deleteExpiredSessions(): Promise<void> {
     await this.prisma.session.deleteMany({
       where: {
         expiresAt: {
           lte: new Date(),
         },
+      },
+    });
+  }
+
+  /** **Updates a specific given session** */
+  async updateSessionExpirationDate(
+    sessionUUID: string,
+    newSessionExpirationDate: Date,
+  ): Promise<void> {
+    await this.prisma.session.update({
+      where: {
+        uuid: sessionUUID,
+      },
+      data: {
+        expiresAt: newSessionExpirationDate,
       },
     });
   }
