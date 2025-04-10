@@ -137,6 +137,37 @@ export class PrismaAdapter implements DatabaseAdapter {
 
     return [sessions, user];
   }
+
+  /** **Returns the owner user of the session and the session itself** */
+  async getUserAndSession(
+    sessionUUID: string,
+  ): Promise<[Session, LahjalistaUser] | null> {
+    const sessionFromDatabase = await this.prisma.session.findUnique({
+      where: {
+        uuid: sessionUUID,
+      },
+      select: {
+        uuid: true,
+        expiresAt: true,
+        userUUID: true,
+        User: {
+          omit: {
+            id: true,
+            password: true,
+          },
+        },
+      },
+    });
+
+    if (!sessionFromDatabase || !sessionFromDatabase.User) return null;
+
+    const { expiresAt, userUUID, uuid } = sessionFromDatabase;
+
+    return [
+      { expiresAt, userUUID, uuid, fresh: false },
+      sessionFromDatabase.User,
+    ];
+  }
 }
 
 const prisma = new PrismaClient();
