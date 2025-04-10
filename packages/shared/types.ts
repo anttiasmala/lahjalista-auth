@@ -31,7 +31,7 @@ export type DatabaseAdapter = {
   getUserAndSession: (sessionUUID: string) => Promise<[Session, LahjalistaUser] | null>; // gets the user and ONLY ONE session
   getUserSessions: (userUUID: string) => Promise<Session[]>; // gets all the sessions belonging to a ONE user
   // prettier-ignore
-  updateSessionExpirationDate: (sessionUUID: string, sessionExpirationDate: Date) => Promise<void>;
+  updateSessionExpirationDate: (sessionUUID: string, newSessionExpirationDate: Date) => Promise<void>;
   deleteUserSessions: (userUUID: string) => Promise<void>; // deletes all the sessions belonging to a user
   deleteExpiredSessions: () => Promise<void>;
 };
