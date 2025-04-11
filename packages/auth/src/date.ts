@@ -1,4 +1,4 @@
-// Credits: https://github.com/lucia-auth/lucia/blob/v3/packages/lucia/src/date.ts
+// Source & Credits: https://github.com/lucia-auth/lucia/blob/v3/packages/lucia/src/date.ts
 
 export type TimeSpanUnit = 'ms' | 's' | 'm' | 'h' | 'd' | 'w';
 
