@@ -3,6 +3,7 @@ import { generateId, generateUUID } from '~/packages/auth/src/crypto';
 import {
   CreateSession,
   DatabaseAdapter,
+  DatabaseSession,
   LahjalistaUser,
   Session,
   User,
@@ -47,7 +48,9 @@ export class PrismaAdapter implements DatabaseAdapter {
     return user ? user : null;
   }
 
-  async createSession(sessionData: CreateSession): Promise<Session | null> {
+  async createSession(
+    sessionData: CreateSession,
+  ): Promise<DatabaseSession | null> {
     const { expiresAt, userUUID, uuid } = sessionData;
     const session = await this.prisma.session.create({
       data: {
@@ -62,7 +65,7 @@ export class PrismaAdapter implements DatabaseAdapter {
       },
     });
 
-    return { ...session, fresh: true };
+    return session;
   }
 
   async deleteSession(sessionUUID: string): Promise<void> {
@@ -74,7 +77,7 @@ export class PrismaAdapter implements DatabaseAdapter {
     return;
   }
 
-  async getSession(sessionUUID: string): Promise<Session | null> {
+  async getSession(sessionUUID: string): Promise<DatabaseSession | null> {
     const session = await this.prisma.session.findUnique({
       where: { uuid: sessionUUID },
       select: {
@@ -84,10 +87,7 @@ export class PrismaAdapter implements DatabaseAdapter {
       },
     });
 
-    if (session) {
-      return { fresh: false, ...session };
-    }
-    return null;
+    return session;
   }
 
   /** **Potentially a risky function** */
@@ -115,8 +115,8 @@ export class PrismaAdapter implements DatabaseAdapter {
 
   async getUserAndSessions(
     userUUID: string,
-  ): Promise<[Session[], LahjalistaUser] | null> {
-    const sessionsFromDatabase = await this.prisma.session.findMany({
+  ): Promise<[DatabaseSession[], LahjalistaUser] | null> {
+    const sessions = await this.prisma.session.findMany({
       where: {
         userUUID: userUUID,
       },
@@ -128,7 +128,7 @@ export class PrismaAdapter implements DatabaseAdapter {
     });
 
     // return null if sessions were not found
-    if (sessionsFromDatabase.length <= 0) return null;
+    if (sessions.length <= 0) return null;
 
     // if sessions were found get the user
     const user = await this._getUser(userUUID);
@@ -136,18 +136,13 @@ export class PrismaAdapter implements DatabaseAdapter {
     // if user does not exist return null
     if (!user) return null;
 
-    const sessions: Session[] = sessionsFromDatabase.map((object) => ({
-      ...object,
-      fresh: false,
-    }));
-
     return [sessions, user];
   }
 
   /** **Returns the owner user of the session and the session itself** */
   async getUserAndSession(
     sessionUUID: string,
-  ): Promise<[Session, LahjalistaUser] | null> {
+  ): Promise<[DatabaseSession, LahjalistaUser] | null> {
     const sessionFromDatabase = await this.prisma.session.findUnique({
       where: {
         uuid: sessionUUID,
@@ -169,14 +164,11 @@ export class PrismaAdapter implements DatabaseAdapter {
 
     const { expiresAt, userUUID, uuid } = sessionFromDatabase;
 
-    return [
-      { expiresAt, userUUID, uuid, fresh: false },
-      sessionFromDatabase.User,
-    ];
+    return [{ expiresAt, userUUID, uuid }, sessionFromDatabase.User];
   }
 
-  async getUserSessions(userUUID: string): Promise<Session[]> {
-    const sessionsFromDatabase = await this.prisma.session.findMany({
+  async getUserSessions(userUUID: string): Promise<DatabaseSession[]> {
+    const sessions = await this.prisma.session.findMany({
       where: {
         userUUID,
       },
@@ -186,11 +178,6 @@ export class PrismaAdapter implements DatabaseAdapter {
         userUUID: true,
       },
     });
-
-    const sessions: Session[] = sessionsFromDatabase.map((object) => ({
-      ...object,
-      fresh: false,
-    }));
 
     return sessions;
   }
@@ -215,6 +202,8 @@ export class PrismaAdapter implements DatabaseAdapter {
         },
       },
     });
+
+    return;
   }
 
   /** **Updates a specific given session** */
@@ -230,6 +219,8 @@ export class PrismaAdapter implements DatabaseAdapter {
         expiresAt: newSessionExpirationDate,
       },
     });
+
+    return;
   }
 }
 
