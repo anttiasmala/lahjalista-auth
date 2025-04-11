@@ -30,7 +30,8 @@ export class LahjaListaAuth {
     this.adapter = adapter;
 
     this.sessionExpiresIn = options?.sessionExpiresIn ?? new TimeSpan(30, 'd');
-    this.sessionCookieName = options?.sessionCookie?.name ?? 'auth_session';
+    this.sessionCookieName =
+      options?.sessionCookie?.name ?? 'lahjalista_auth_session'; // changed default sessionCookie name from "auth_session" -> "lahjalista_auth_session"
 
     let sessionCookieExpiresIn = this.sessionExpiresIn;
     if (options?.sessionCookie?.expires === false) {
