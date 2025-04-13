@@ -30,7 +30,7 @@ export type DatabaseAdapter = {
   // prettier-ignore
   getUserAndSessions: (userUUID: string) => Promise<[DatabaseSession[], LahjalistaUser] | null>; // gets the user and ALL the sessions
   //prettier-ignore
-  getUserAndSession: (sessionUUID: string) => Promise<[DatabaseSession, LahjalistaUser] | null>; // gets the user and ONLY ONE session
+  getUserAndSession: (sessionUUID: string) => Promise<{databaseSession: DatabaseSession; databaseUser:LahjalistaUser} | {databaseSession: null, databaseUser: null}>; // gets the user and ONLY ONE session
   getUserSessions: (userUUID: string) => Promise<DatabaseSession[]>; // gets all the sessions belonging to a ONE user
   // prettier-ignore
   updateSessionExpirationDate: (sessionUUID: string, newSessionExpirationDate: Date) => Promise<void>;
@@ -49,3 +49,17 @@ export type LahjalistaUser = {
   uuid: string;
   role: string;
 };
+
+type ValidSessionResult = {
+  status: 'valid';
+  databaseSession: DatabaseSession;
+  databaseUser: LahjalistaUser;
+};
+
+type InvalidSessionResult = {
+  status: 'invalid';
+  databaseSession: null;
+  databaseUser: null;
+};
+
+export type GetUserAndSessionResult = ValidSessionResult | InvalidSessionResult;
