@@ -4,6 +4,7 @@ import {
   CreateSession,
   DatabaseAdapter,
   DatabaseSession,
+  GetUserAndSessionResult,
   LahjalistaUser,
   Session,
   User,
@@ -142,7 +143,7 @@ export class PrismaAdapter implements DatabaseAdapter {
   /** **Returns the owner user of the session and the session itself** */
   async getUserAndSession(
     sessionUUID: string,
-  ): Promise<[DatabaseSession, LahjalistaUser] | null> {
+  ): Promise<GetUserAndSessionResult> {
     const sessionFromDatabase = await this.prisma.session.findUnique({
       where: {
         uuid: sessionUUID,
@@ -160,11 +161,17 @@ export class PrismaAdapter implements DatabaseAdapter {
       },
     });
 
-    if (!sessionFromDatabase || !sessionFromDatabase.User) return null;
+    if (!sessionFromDatabase || !sessionFromDatabase.User)
+      return { status: 'invalid', databaseSession: null, databaseUser: null };
 
     const { expiresAt, userUUID, uuid } = sessionFromDatabase;
 
-    return [{ expiresAt, userUUID, uuid }, sessionFromDatabase.User];
+    // add Zod here perhaps
+    return {
+      status: 'valid',
+      databaseSession: { expiresAt, userUUID, uuid },
+      databaseUser: sessionFromDatabase.User,
+    };
   }
 
   async getUserSessions(userUUID: string): Promise<DatabaseSession[]> {

@@ -79,15 +79,18 @@ export class LahjaListaAuth {
   ): Promise<
     { user: LahjalistaUser; session: Session } | { user: null; session: null }
   > {
-    const [databaseSession, databaseUser] =
-      await this.adapter.getUserAndSession(sessionUUID);
-    if (!databaseSession) {
+    const {
+      status: databaseStatus,
+      databaseSession,
+      databaseUser,
+    } = await this.adapter.getUserAndSession(sessionUUID);
+
+    // if status is invalid, return object with null values
+    if (databaseStatus === 'invalid') {
       return { session: null, user: null };
     }
-    if (!databaseUser) {
-      await this.adapter.deleteSession(databaseSession.uuid);
-      return { session: null, user: null };
-    }
+
+    // if session has expirated run this
     if (!isWithinExpirationDate(databaseSession.expiresAt)) {
       await this.adapter.deleteSession(databaseSession.uuid);
       return { session: null, user: null };
