@@ -92,6 +92,16 @@ export class LahjaListaAuth {
       await this.adapter.deleteSession(databaseSession.uuid);
       return { session: null, user: null };
     }
+
+    // Reduces current expiration time of session the half of the incoming sessionExpirationTime
+    // for example, the default time is 30 days. So 30 days = 30 * 1000 * 60 * 60 * 24 = 2 592 000 000
+    // databaseSession.expiresAt could be for exmaple this day + 10 days. So 10 days = 10 * 1000 * 60 * 60 * 24 = 864 000 000
+    // 864 000 000 - 2 592 000 000 / 2
+    // 864 000 000 - 1 296 000 000 = −432 000 000
+
+    // activePeriodExpirationDate seems to be true if databaseSession.expiresAt is something like 50 000 days
+    // else it seems to be false
+    // not totally sure about the primary usage
     const activePeriodExpirationDate = new Date(
       databaseSession.expiresAt.getTime() -
         this.sessionExpiresIn.milliseconds() / 2,
@@ -102,6 +112,10 @@ export class LahjaListaAuth {
       fresh: false,
       expiresAt: databaseSession.expiresAt,
     };
+
+    // here we would check if current time is less than so called "activePeriodExpirationDate" time
+    // so 1 744 363 890 715 < (-432 000 000)
+    // output: false
     if (!isWithinExpirationDate(activePeriodExpirationDate)) {
       session.fresh = true;
       session.expiresAt = createDate(this.sessionExpiresIn);
