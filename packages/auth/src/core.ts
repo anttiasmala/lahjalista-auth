@@ -30,8 +30,10 @@ export class LahjaListaAuth {
     this.adapter = adapter;
 
     this.sessionExpiresIn = options?.sessionExpiresIn ?? new TimeSpan(30, 'd');
+
+    // changed default sessionCookie name from "auth_session" -> "lahjalista_auth_session"
     this.sessionCookieName =
-      options?.sessionCookie?.name ?? 'lahjalista_auth_session'; // changed default sessionCookie name from "auth_session" -> "lahjalista_auth_session"
+      options?.sessionCookie?.name ?? 'lahjalista_auth_session';
 
     let sessionCookieExpiresIn = this.sessionExpiresIn;
     if (options?.sessionCookie?.expires === false) {
@@ -53,7 +55,7 @@ export class LahjaListaAuth {
     );
   }
 
-  /** **Gets all the NON-EXPIRED sessions of a user has and returns them** */
+  /** **Gets all the NON-EXPIRED sessions of a user** */
   public async getUserSessions(userUUID: string): Promise<Session[]> {
     const databaseSessions = await this.adapter.getUserSessions(userUUID);
     const sessions: Session[] = [];
@@ -131,6 +133,7 @@ export class LahjaListaAuth {
     return { user, session };
   }
 
+  /** **Creates a new session to the database which can be "given" to the user** */
   public async createSession(
     userUUID: string,
     options?: {
