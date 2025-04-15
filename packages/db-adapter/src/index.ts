@@ -35,7 +35,7 @@ declare global {
 export class PrismaAdapter implements DatabaseAdapter {
   private prisma: PrismaClient;
 
-  constructor(prisma: PrismaClient) {
+  constructor(prisma: PrismaClient | undefined) {
     this.prisma = prisma ?? new PrismaClient();
   }
 
