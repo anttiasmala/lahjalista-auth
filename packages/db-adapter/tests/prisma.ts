@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { adapterTest, adapterTest_v2 } from './prismaAdapter';
+import { adapterTest_v2 } from './prismaAdapter';
 import { PrismaAdapter } from '../src';
 
 const prisma = new PrismaClient();

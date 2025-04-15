@@ -1,13 +1,10 @@
-import { Prisma, PrismaClient } from '@prisma/client';
-import { generateId, generateUUID } from '~/packages/auth/src/crypto';
+import { PrismaClient } from '@prisma/client';
 import {
   CreateSession,
   DatabaseAdapter,
   DatabaseSession,
   GetUserAndSessionResult,
   LahjalistaUser,
-  Session,
-  User,
 } from '~/packages/shared/types';
 
 /*
