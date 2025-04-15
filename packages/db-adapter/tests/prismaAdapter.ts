@@ -150,3 +150,29 @@ export async function adapterTest(adapter: DatabaseAdapter, userUUID: string) {
 
   return;
 }
+
+export async function adapterTest_v2(
+  adapter: DatabaseAdapter,
+  userUUID: string,
+) {
+  try {
+    SESSION_UUID = generateUUID();
+    console.log(
+      await adapter.createSession({
+        userUUID,
+        expiresAt: new Date(),
+        uuid: SESSION_UUID,
+      }),
+    );
+    await sleep(1000);
+    console.log(await adapter.getUserFromSession(SESSION_UUID));
+    await sleep(1000);
+    console.log(await adapter.getUserAndSessions(userUUID));
+    await sleep(3000);
+    await adapter.deleteUserSessions(userUUID);
+    await sleep(3000);
+    console.log(await adapter.getUserAndSessions(userUUID));
+  } catch (e) {
+    console.error(e);
+  }
+}

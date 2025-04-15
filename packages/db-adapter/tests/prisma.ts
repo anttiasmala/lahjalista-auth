@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { adapterTest } from './prismaAdapter';
+import { adapterTest, adapterTest_v2 } from './prismaAdapter';
 import { PrismaAdapter } from '../src';
 
 const prisma = new PrismaClient();
@@ -13,7 +13,8 @@ const generatedUUID = crypto.randomUUID().toString();
 async function testRun() {
   await createUser();
 
-  await adapterTest(prismaAdapter, generatedUUID);
+  //await adapterTest(prismaAdapter, generatedUUID);
+  await adapterTest_v2(prismaAdapter, generatedUUID);
 
   await prisma.session.deleteMany();
   await prisma.user.deleteMany();
